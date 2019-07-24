@@ -11,6 +11,9 @@ class App extends Component {
     account: null, 
     contract: null,
     manager: ''
+    //requests: []
+    //balance: ''
+    //value: ''
   };
 
   componentDidMount = async () => {
@@ -32,7 +35,6 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
         );
 
-      //var SimpleStorageContract
 
 
 
@@ -64,7 +66,9 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     const manager = await contract.methods.manager().call();
-      
+    //const requests = await contract.methods.getRequestsCount().call();
+    //const balance = await web3.eth.getBalance(contract.options.address);
+     
 
     // Stores a given value, 5 by default.
     await contract.methods.set(5).send({ from: accounts[0] });
@@ -73,7 +77,9 @@ class App extends Component {
     const response = await contract.methods.get().call();
 
     // Update state with the result.
-    this.setState({ storageValue: response, manager : manager});
+    //******* When ready, add requests below to set state
+    //add balance to state
+    this.setState({ storageValue: response, manager : manager });
   };
 
 
@@ -97,12 +103,29 @@ class App extends Component {
       <div className="App">
         <h1>Lowest fees for Freelancers</h1>
         <p>20% of the cut to UpWork? We don't take a dime.</p>
-        <h2>Freelancer Address:</h2>
-        <p> {this.state.manager} </p> 
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
+        <h2>Project Details:</h2>
+        <p> 
+          This contract was deplpyed but the freelancer at {this.state.manager} 
+          {//There are currently {this.state.requests.length} requests and the value of the most recent 
+          //request was {web3.utils.fromWei(this.state.balance), 'ether' }
+        }
+        </p> 
+  
+
+        <hr />
+
+        <form >
+          <h4> Are you a freelancer and want to avoid the fees on upwork? Enter the Eth address of your contractor here! </h4>
+          <div>
+            <label> Amount of Ether to enter </label>
+            <input
+              //value={this.state.value}
+              //onChange={event => this.setState({ value: event.target.value})}
+            />
+          </div>
+          <button>Enter </button>
+        </form>
+
         <p>
           Try changing the value stored on <strong>line 40</strong> of App.js.
         </p>

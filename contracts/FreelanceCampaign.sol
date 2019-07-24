@@ -16,7 +16,7 @@ pragma solidity ^0.5.0;
 contract FreelanceCampaign {
     
     struct Request {
-        string ipfsreference;
+        //string ipfsreference;
         uint valueRequested;
         address payable ownerToPay;
         bool complete;
@@ -46,10 +46,10 @@ contract FreelanceCampaign {
         freelancer = free;
     }
     
-
-    function createRequest(string memory ipfsreference, uint valueRequested, address payable ownerToPay) public freelanceronly {
+//took out string memory ipfsreference from parameter
+    function createRequest(uint valueRequested, address payable ownerToPay) public freelanceronly {
         Request memory newRequest = Request({
-           ipfsreference: ipfsreference,
+           //ipfsreference: ipfsreference,
            valueRequested: valueRequested,
            ownerToPay: ownerToPay,
            complete: false

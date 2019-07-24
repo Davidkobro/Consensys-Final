@@ -14,6 +14,8 @@ class App extends Component {
     //requests: []
     //balance: ''
     //value: ''
+    //message: ''
+    //employer: ''
   };
 
   componentDidMount = async () => {
@@ -94,6 +96,22 @@ class App extends Component {
     return this.setState({storageValue: contract.methods.get.call()});
   }  */
 
+  //don't need to worry about "this" so don't need to bind
+  /* onSubmit = async (event) => {
+    event.preventDefault();
+
+    const accounts = await web3.eth.getAccounts();
+
+    this.setState({ message: 'Waiting on transaction success...' })
+
+    await contract.methods.createRequest({web3.utils.toWei(this.state.value, 'ether')}, this.state.employer).send({
+      from: accounts[0]
+      //do I need a value here?
+    })
+
+    this.setState({ message: 'You have submitted a request!' })
+  } */
+
 
   render() {
     if (!this.state.web3) {
@@ -114,7 +132,7 @@ class App extends Component {
 
         <hr />
 
-        <form >
+        <form onSubmit={this.onSubmit}>
           <h4> Are you a freelancer and want to avoid the fees on upwork? Enter the Eth address of your contractor here! </h4>
           <div>
             <label> Amount of Ether to enter </label>
@@ -123,14 +141,25 @@ class App extends Component {
               //onChange={event => this.setState({ value: event.target.value})}
             />
           </div>
-          <button>Enter </button>
+          <div>
+            <label> Address of Employer </label>
+            <input
+              //value={this.state.employer}
+              //onChange={event => this.setState({ employer: event.target.employer})}
+            />
+          </div>
+          <button> Enter Amount and Employer Address </button>
+          
         </form>
 
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
+        <hr />
+
+        {//<h3>{this.state.message}</h1>
+        }
+
+    
         <div>The stored value is: {this.state.storageValue}</div>   
-        {/* <button onClick={this.handleClick.bind(this)}> Set Storage</button>  */}
+       
      </div>
     );
   }

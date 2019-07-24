@@ -2,13 +2,20 @@ import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import FreelanceCampaign from "./contracts/FreelanceCampaign.json";
 import getWeb3 from "./utils/getWeb3";
-
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = { 
+    storageValue: 0, 
+    web3: null, 
+    account: null, 
+    contract: null,
+    manager: ''
+  };
 
   componentDidMount = async () => {
+
+
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
@@ -23,15 +30,20 @@ class App extends Component {
       const instance = new web3.eth.Contract(
         SimpleStorageContract.abi,
         deployedNetwork && deployedNetwork.address,
-      );
+        );
+
+      //var SimpleStorageContract
+
+
+
       // Get the contract instance.
-      const freeDeployedNetwork = FreelanceCampaign.networks[networkId];
+     /*  const freeDeployedNetwork = FreelanceCampaign.networks[networkId];
       const freelanceInstance = new web3.eth.Contract(
         FreelanceCampaign.abi,
-        freeDeployedNetwork && freeDeployedNetwork.address,
-      );
+        freeDeployedNetwork && freeDeployedNetwork.address
+      ); */
 
-      console.log(freelanceInstance);
+      //console.log(freelanceInstance);
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -43,10 +55,16 @@ class App extends Component {
       );
       console.error(error);
     }
+
+
+    
   };
 
   runExample = async () => {
     const { accounts, contract } = this.state;
+
+    const manager = await contract.methods.manager().call();
+      
 
     // Stores a given value, 5 by default.
     await contract.methods.set(5).send({ from: accounts[0] });
@@ -55,8 +73,21 @@ class App extends Component {
     const response = await contract.methods.get().call();
 
     // Update state with the result.
-    this.setState({ storageValue: response });
+    this.setState({ storageValue: response, manager : manager});
   };
+
+
+  /* handleClick(event){
+    const contract = this.state.contract 
+    const account = this.state.account 
+
+    var value = 3
+
+    contract.methods.set(value);
+    //return contract.methods.get.call();
+    return this.setState({storageValue: contract.methods.get.call()});
+  }  */
+
 
   render() {
     if (!this.state.web3) {
@@ -64,9 +95,10 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
+        <h1>Lowest fees for Freelancers</h1>
+        <p>20% of the cut to UpWork? We don't take a dime.</p>
+        <h2>Freelancer Address:</h2>
+        <p> {this.state.manager} </p> 
         <p>
           If your contracts compiled and migrated successfully, below will show
           a stored value of 5 (by default).
@@ -74,8 +106,9 @@ class App extends Component {
         <p>
           Try changing the value stored on <strong>line 40</strong> of App.js.
         </p>
-        <div>The stored value is: {this.state.storageValue}</div>
-      </div>
+        <div>The stored value is: {this.state.storageValue}</div>   
+        {/* <button onClick={this.handleClick.bind(this)}> Set Storage</button>  */}
+     </div>
     );
   }
 }

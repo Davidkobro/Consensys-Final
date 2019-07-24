@@ -23,7 +23,7 @@ contract FreelanceCampaign {
         mapping(address => bool) approvals;
     }
 
-    
+    string storedData;
     Request[] public requests;
     mapping(address => bool) public approvers;
     address payable public freelancer;
@@ -42,8 +42,16 @@ contract FreelanceCampaign {
         _;
     }
 
-    constructor (address payable free) public {
-        freelancer = free;
+    constructor() public {
+        freelancer = msg.sender;
+    }
+
+    function set(string _example) public {
+        storedData = x;
+    }
+
+    function get() public view returns (string) {
+     return storedData;
     }
     
 //took out string memory ipfsreference from parameter

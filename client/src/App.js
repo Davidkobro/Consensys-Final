@@ -1,25 +1,26 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+//import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import FreelanceCampaign from "./contracts/FreelanceCampaign.json";
 import getWeb3 from "./utils/getWeb3";
 import "./App.css";
 
 class App extends Component {
   state = { 
-    storageValue: 0, 
+    storageValue: '', 
     web3: null, 
     account: null, 
     contract: null,
-    manager: ''
-    //requests: []
+    freelancer: '',
+    requests: [],
     //balance: ''
     //value: ''
     //message: ''
     //employer: ''
   };
 
-  componentDidMount = async () => {
 
+
+  componentDidMount = async () => {
 
     try {
       // Get network provider and web3 instance.
@@ -31,23 +32,18 @@ class App extends Component {
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
 
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
+      //const deployedNetwork = SimpleStorageContract.networks[networkId];
+      //const instance = new web3.eth.Contract(
+        //SimpleStorageContract.abi,
+       // deployedNetwork && deployedNetwork.address,
+        //);
+
+      const freeDeployedNetwork = FreelanceCampaign.networks[networkId];
       const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-        );
-
-
-
-
-      // Get the contract instance.
-     /*  const freeDeployedNetwork = FreelanceCampaign.networks[networkId];
-      const freelanceInstance = new web3.eth.Contract(
         FreelanceCampaign.abi,
         freeDeployedNetwork && freeDeployedNetwork.address
-      ); */
+      ); 
 
-      //console.log(freelanceInstance);
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -65,23 +61,25 @@ class App extends Component {
   };
 
   runExample = async () => {
+
+    //const web3 = await getWeb3();
+
     const { accounts, contract } = this.state;
 
-    const manager = await contract.methods.manager().call();
-    //const requests = await contract.methods.getRequestsCount().call();
+    const freelancer = await contract.methods.freelancer().call();
+    const requests = await contract.methods.getRequestsCount().call();
     //const balance = await web3.eth.getBalance(contract.options.address);
      
 
     // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
+    await contract.methods.set("Yes").send({ from: accounts[0] });
 
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
 
-    // Update state with the result.
-    //******* When ready, add requests below to set state
-    //add balance to state
-    this.setState({ storageValue: response, manager : manager });
+    //balance : balance
+    this.setState({ storageValue: response, freelancer : freelancer, requests : requests });
+
   };
 
 
@@ -114,19 +112,26 @@ class App extends Component {
 
 
   render() {
+    //const web3 = getWeb3();
+
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
+    //X = {this.state.requests.length}
+    // Y = {web3.utils.fromWei(this.state.balance), 'ether' }
+    /*
+    There are currently requests and the value of the most recent 
+          request was Y ether
+          */
     return (
       <div className="App">
         <h1>Lowest fees for Freelancers</h1>
         <p>20% of the cut to UpWork? We don't take a dime.</p>
         <h2>Project Details:</h2>
-        <p> 
-          This contract was deplpyed but the freelancer at {this.state.manager} 
-          {//There are currently {this.state.requests.length} requests and the value of the most recent 
-          //request was {web3.utils.fromWei(this.state.balance), 'ether' }
-        }
+        
+        <p>
+          This contract was deplpyed by the freelancer at {this.state.freelancer} 
+          
         </p> 
   
 
@@ -158,7 +163,7 @@ class App extends Component {
         }
 
     
-        <div>The stored value is: {this.state.storageValue}</div>   
+        <div>Has A Freelancer entered the Contract?: {this.state.storageValue}</div>   
        
      </div>
     );

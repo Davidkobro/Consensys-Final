@@ -23,7 +23,7 @@ contract FreelanceCampaign {
         mapping(address => bool) approvals;
     }
 
-    string storedData;
+    uint storedData;
     Request[] public requests;
     mapping(address => bool) public approvers;
     address payable public freelancer;
@@ -46,11 +46,11 @@ contract FreelanceCampaign {
         freelancer = msg.sender;
     }
 
-    function set(string _example) public {
+    function set(uint x) public {
         storedData = x;
     }
 
-    function get() public view returns (string) {
+    function get() public view returns (uint) {
      return storedData;
     }
     

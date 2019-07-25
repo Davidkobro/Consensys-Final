@@ -12,12 +12,10 @@ class App extends Component {
     contract: null,
     freelancer: '',
     requests: [],
-    //balance: ''
-    //value: ''
-    //message: ''
-    //employer: ''
+    value: '',
+    message: '',
+    employer: ''
   };
-
 
 
   componentDidMount = async () => {
@@ -72,7 +70,7 @@ class App extends Component {
      
 
     // Stores a given value, 5 by default.
-    await contract.methods.set("Yes").send({ from: accounts[0] });
+    await contract.methods.set(1).send({ from: accounts[0] });
 
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
@@ -83,33 +81,47 @@ class App extends Component {
   };
 
 
-  /* handleClick(event){
-    const contract = this.state.contract 
-    const account = this.state.account 
-
-    var value = 3
-
-    contract.methods.set(value);
-    //return contract.methods.get.call();
-    return this.setState({storageValue: contract.methods.get.call()});
-  }  */
 
   //don't need to worry about "this" so don't need to bind
-  /* onSubmit = async (event) => {
+  onSubmit = async (event) => {
+
+    const { accounts, contract } = this.state;
+
+    const web3 = await getWeb3();
+
     event.preventDefault();
 
-    const accounts = await web3.eth.getAccounts();
+    accounts = await web3.eth.getAccounts();
 
     this.setState({ message: 'Waiting on transaction success...' })
 
-    await contract.methods.createRequest({web3.utils.toWei(this.state.value, 'ether')}, this.state.employer).send({
+    //await contract.methods.createRequest({web3.utils.toWei(this.state.value, 'ether')}, this.state.employer).send({
+     // from: accounts[0]
+    //})
+
+    await contract.methods.createRequest(this.state.storageValue, this.state.employer).send({
       from: accounts[0]
-      //do I need a value here?
     })
 
     this.setState({ message: 'You have submitted a request!' })
-  } */
+  } 
 
+  onClick = async () => {
+
+    const { accounts, contract } = this.state;
+
+    const web3 = await getWeb3();
+
+    accounts = await web3.eth.getAccounts()
+
+    this.setState({ message: 'Waiting on Transaction Success...' });
+
+    await contract.methods.approveRequest(contract.methods.requests[0]).send({
+      from: accounts[0]
+    })
+
+    this.setState({ message: 'Payment has been sent :)' })
+  };
 
   render() {
     //const web3 = getWeb3();
@@ -134,23 +146,22 @@ class App extends Component {
           
         </p> 
   
-
         <hr />
 
         <form onSubmit={this.onSubmit}>
           <h4> Are you a freelancer and want to avoid the fees on upwork? Enter the Eth address of your contractor here! </h4>
           <div>
-            <label> Amount of Ether to enter </label>
+            <label> Amount of Ether to request from your employer </label>
             <input
-              //value={this.state.value}
-              //onChange={event => this.setState({ value: event.target.value})}
+              value={this.state.value}
+              onChange={event => this.setState({ value: event.target.value})}
             />
           </div>
           <div>
-            <label> Address of Employer </label>
+            <label> Address of your Employer </label>
             <input
-              //value={this.state.employer}
-              //onChange={event => this.setState({ employer: event.target.employer})}
+              value={this.state.employer}
+              onChange={event => this.setState({ employer: event.target.employer})}
             />
           </div>
           <button> Enter Amount and Employer Address </button>
@@ -159,11 +170,16 @@ class App extends Component {
 
         <hr />
 
-        {//<h3>{this.state.message}</h1>
-        }
+        <h4>If you're the employer, click below to send the contractor their requested amount of {this.state.value} ether </h4>
+        <button onClick={this.onClick}> Pay Contractor </button>
+
+        <hr />
+
+        <h3>{this.state.message}</h3>
+        
 
     
-        <div>Has A Freelancer entered the Contract?: {this.state.storageValue}</div>   
+        <div>Has A Freelancer entered the Contract? 1 for Yes and 0 for No: {this.state.storageValue}</div>   
        
      </div>
     );

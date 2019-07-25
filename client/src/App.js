@@ -85,7 +85,8 @@ class App extends Component {
   //don't need to worry about "this" so don't need to bind
   onSubmit = async (event) => {
 
-    const { accounts, contract, web3 } = this.state;
+    //web3
+    const { accounts, contract } = this.state;
 
 
     event.preventDefault();
@@ -96,9 +97,7 @@ class App extends Component {
     //await contract.methods.createRequest({web3.utils.toWei(this.state.value, 'ether')}, this.state.employer).send({
      // from: accounts[0]
     //})
-    console.log(this.state.value)
-    console.log(this.state.employer)
-    console.log(this.state.contract)
+    
     await contract.methods.createRequest(this.state.value, this.state.employer).send({
       from: accounts[0]
     })
@@ -108,17 +107,22 @@ class App extends Component {
 
   onClick = async () => {
 
-    const { accounts, contract, web3 } = this.state;
+    //accounts, web3
+    const { contract , employer } = this.state;
 
     this.setState({ message: 'Waiting on Transaction Success...' });
 
     //may need to crate a getter that return struct at that index (value requested)
     //will return specific part of the struct
-    let valueRequest = await contract.methods.requests(0).valueRequested.call()
+    let valueRequest = await contract.methods.getRequestValue(0).call()
+    console.log(valueRequest)
+
+    //accounts[0] = employer;
 
     await contract.methods.approveRequest(0).send({
-      from: accounts[0],
-      value: valueRequest
+      from: employer,
+      value: valueRequest,
+      gas:'1000000'
     })
 
     this.setState({ message: 'Payment has been sent :)' })

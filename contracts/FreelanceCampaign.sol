@@ -37,10 +37,10 @@ contract FreelanceCampaign {
         _;
     }
 
-    modifier owneronly() {
-        require(msg.sender == owner);
-        _;
-    }
+    //modifier owneronly() {
+        ///require(msg.sender == owner);
+       //_;
+   // }
 
     constructor() public {
         freelancer = msg.sender;
@@ -48,6 +48,12 @@ contract FreelanceCampaign {
 
     function set(uint x) public {
         storedData = x;
+    }
+
+    function getRequestValue(uint index) public view returns (uint){
+        Request storage request = requests[index];
+        uint value = request.valueRequested;
+        return value;
     }
 
     function get() public view returns (uint) {
@@ -71,9 +77,8 @@ contract FreelanceCampaign {
     }
 
 
-    function approveRequest(uint index) public payable owneronly{
+    function approveRequest(uint index) public payable {
         Request storage request = requests[index];
-        require(request.valueRequested < msg.value, "not enough funds sent with transaction");
         require(approvers[msg.sender]);
         require(!request.approvals[msg.sender]);
         require(!request.complete);

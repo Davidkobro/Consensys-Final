@@ -85,21 +85,21 @@ class App extends Component {
   //don't need to worry about "this" so don't need to bind
   onSubmit = async (event) => {
 
-    const { accounts, contract } = this.state;
+    const { accounts, contract, web3 } = this.state;
 
-    const web3 = await getWeb3();
 
     event.preventDefault();
 
-    accounts = await web3.eth.getAccounts();
 
     this.setState({ message: 'Waiting on transaction success...' })
 
     //await contract.methods.createRequest({web3.utils.toWei(this.state.value, 'ether')}, this.state.employer).send({
      // from: accounts[0]
     //})
-
-    await contract.methods.createRequest(this.state.storageValue, this.state.employer).send({
+    console.log(this.state.value)
+    console.log(this.state.employer)
+    console.log(this.state.contract)
+    await contract.methods.createRequest(this.state.value, this.state.employer).send({
       from: accounts[0]
     })
 
@@ -108,16 +108,17 @@ class App extends Component {
 
   onClick = async () => {
 
-    const { accounts, contract } = this.state;
-
-    const web3 = await getWeb3();
-
-    accounts = await web3.eth.getAccounts()
+    const { accounts, contract, web3 } = this.state;
 
     this.setState({ message: 'Waiting on Transaction Success...' });
 
-    await contract.methods.approveRequest(contract.methods.requests[0]).send({
-      from: accounts[0]
+    //may need to crate a getter that return struct at that index (value requested)
+    //will return specific part of the struct
+    let valueRequest = await contract.methods.requests(0).valueRequested.call()
+
+    await contract.methods.approveRequest(0).send({
+      from: accounts[0],
+      value: valueRequest
     })
 
     this.setState({ message: 'Payment has been sent :)' })
@@ -161,7 +162,7 @@ class App extends Component {
             <label> Address of your Employer </label>
             <input
               value={this.state.employer}
-              onChange={event => this.setState({ employer: event.target.employer})}
+              onChange={event => this.setState({ employer: event.target.value})}
             />
           </div>
           <button> Enter Amount and Employer Address </button>
@@ -179,7 +180,7 @@ class App extends Component {
         
 
     
-        <div>Has A Freelancer entered the Contract? 1 for Yes and 0 for No: {this.state.storageValue}</div>   
+        <div>Has A Freelancer entered the Contract? 1 for Yes: {this.state.storageValue}</div>   
        
      </div>
     );
@@ -187,3 +188,12 @@ class App extends Component {
 }
 
 export default App;
+
+
+//get App to function properly 
+//Check to see what's required around the excersizes as I still need to do one of them
+//other requirements I'll work on (libraries, Curcuit breaker pattern, ReadMe, etc)
+//section that describes design decisions I made (file called design patterns) 
+//section on common attacks and how contract protects 
+//video of me using application and how I did it. 
+//Readme explain everything and everything someone needs to test the project (oversharing is always best) 

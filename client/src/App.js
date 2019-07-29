@@ -14,7 +14,8 @@ class App extends Component {
     requests: [],
     value: '',
     message: '',
-    employer: ''
+    employer: '',
+    circuitMessage: ''
   };
 
 
@@ -115,9 +116,7 @@ class App extends Component {
     //may need to crate a getter that return struct at that index (value requested)
     //will return specific part of the struct
     let valueRequest = await contract.methods.getRequestValue(0).call()
-    console.log(valueRequest)
-
-    //accounts[0] = employer;
+    //console.log(valueRequest)
 
     await contract.methods.approveRequest(0).send({
       from: employer,
@@ -128,18 +127,28 @@ class App extends Component {
     this.setState({ message: 'Payment has been sent :)' })
   };
 
+  whenPressed = async () => {
+
+    const { contract , accounts } = this.state;
+
+    this.setState({ circuitMessage: 'Waiting for contract to stop...' })
+
+    await contract.methods.circuitBreaker().send({
+      from: accounts[0],
+      gas:'1000000'
+    })
+
+    this.setState({ circuitMessage: 'All set! Your contract has been stopped' })
+
+  };
+
   render() {
-    //const web3 = getWeb3();
+    
 
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
-    //X = {this.state.requests.length}
-    // Y = {web3.utils.fromWei(this.state.balance), 'ether' }
-    /*
-    There are currently requests and the value of the most recent 
-          request was Y ether
-          */
+ 
     return (
       <div className="App">
         <h1>Lowest fees for Freelancers</h1>
@@ -181,10 +190,18 @@ class App extends Component {
         <hr />
 
         <h3>{this.state.message}</h3>
-        
-
     
         <div>Has A Freelancer entered the Contract? 1 for Yes: {this.state.storageValue}</div>   
+
+        <hr />
+
+        <h4>Are you a Freelancer and want to stop the contract?</h4>
+        <button onClick={this.whenPressed}> Stop Contract </button>
+
+        <hr />
+
+        <h3>{this.state.circuitMessage}</h3>
+
        
      </div>
     );

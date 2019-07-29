@@ -3,15 +3,6 @@ pragma solidity ^0.5.0;
     //safe math library
     //import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 
-    //curcut breaker pattern - terminate contract (if bug)
-//contract Moral is Ownable{
-        
- //       function kill()
- //       {
- //               if(msg.sender == owner) selfdestruct(owner);
- //       }
-
-//}
 
 contract FreelanceCampaign {
     
@@ -28,6 +19,8 @@ contract FreelanceCampaign {
     mapping(address => bool) public approvers;
     address payable public freelancer;
     address payable public owner;
+    bool public contractPaused = false; 
+
 
     event LogRequested(address freelanceAddress, uint amount);
     event LogApproved(address ownerAddress, uint amount);
@@ -37,10 +30,13 @@ contract FreelanceCampaign {
         _;
     }
 
-    //modifier owneronly() {
-        ///require(msg.sender == owner);
-       //_;
-   // }
+    // If the contract is paused, stop the modified function
+    // Attach this modifier to all public functions
+    modifier checkIfPaused() {
+        require(contractPaused == false);
+        _;
+    }
+
 
     constructor() public {
         freelancer = msg.sender;
@@ -59,9 +55,18 @@ contract FreelanceCampaign {
     function get() public view returns (uint) {
      return storedData;
     }
+
+    function circuitBreaker() public freelanceronly { // onlyfreelancer can call
+        if (contractPaused == false) { 
+            contractPaused = true; 
+        }
+        else { 
+            contractPaused = false; 
+        }
+    }   
     
 //took out string memory ipfsreference from parameter
-    function createRequest(uint valueRequested, address payable ownerToPay) public freelanceronly {
+    function createRequest(uint valueRequested, address payable ownerToPay) public freelanceronly checkIfPaused{
         Request memory newRequest = Request({
            //ipfsreference: ipfsreference,
            valueRequested: valueRequested,
@@ -77,7 +82,7 @@ contract FreelanceCampaign {
     }
 
 
-    function approveRequest(uint index) public payable {
+    function approveRequest(uint index) public payable checkIfPaused{
         Request storage request = requests[index];
         require(approvers[msg.sender]);
         require(!request.approvals[msg.sender]);

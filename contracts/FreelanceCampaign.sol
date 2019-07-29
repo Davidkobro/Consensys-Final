@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-    //safe math library
-    //import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+//safe math library
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 
 
 contract FreelanceCampaign {
@@ -14,6 +14,7 @@ contract FreelanceCampaign {
         mapping(address => bool) approvals;
     }
 
+    using SafeMath for uint;
     uint storedData;
     Request[] public requests;
     mapping(address => bool) public approvers;
@@ -65,11 +66,10 @@ contract FreelanceCampaign {
         }
     }   
     
-//took out string memory ipfsreference from parameter
     function createRequest(uint valueRequested, address payable ownerToPay) public freelanceronly checkIfPaused{
         Request memory newRequest = Request({
-           //ipfsreference: ipfsreference,
-           valueRequested: valueRequested,
+            //converts to Ether
+           valueRequested: valueRequested.mul(1000000000000000000),
            ownerToPay: ownerToPay,
            complete: false
         });

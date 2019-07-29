@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 //safe math library
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../client/node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 
 
 contract FreelanceCampaign {

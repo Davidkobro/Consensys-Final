@@ -16,4 +16,14 @@ contract TestSimpleStorage {
     Assert.equal(simpleStorage.get(), expected, "It should store the value 89.");
   }
 
+   function testItStoresAValue2() public {
+    SimpleStorage simpleStorage = SimpleStorage(DeployedAddresses.SimpleStorage());
+
+    simpleStorage.set(89);
+
+    uint expected = 89;
+
+    Assert.equal(simpleStorage.get(), expected, "It should store the value 89.");
+  }
+
 }

@@ -6341,12 +6341,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xe7E98BCaCeA68df6b78A7765379301194F1eB773",
-      "transactionHash": "0x3843bcce519928139acc41870001ee1f8ba17ea52858e8c4710e55756cebac4d"
+      "address": "0xE06567f0C2B9AABAB035E36204707e8F41a86029",
+      "transactionHash": "0x31bfe3c2b0d6098d1a749f4fa6ead0278a1ef4340954c0e52c6408ab39c4ebfd"
     }
   },
   "schemaVersion": "3.0.3",
-  "updatedAt": "2019-07-29T21:26:27.286Z",
+  "updatedAt": "2019-07-30T17:53:11.693Z",
   "devdoc": {
     "methods": {}
   },

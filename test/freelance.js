@@ -5,31 +5,28 @@ contract("FreelanceCampaign", accounts => {
 //INITIAL CONTRACT TESTS
 
    //Tests to see if the campaign can properly change the value of stored data when initially starting the contract
-  it("...should store the value 89.", async () => {
-    const freelanceInstance = await Freelance.deployed();
+  it("...should store the value 5.", async () => {
+    const freelanceInstance = await Freelance.new();
 
     // Set value of 89
-    await freelanceInstance.methods.set(89, { from: accounts[0] });
+    await freelanceInstance.set(5, { from: accounts[0] });
 
     // Get stored value
-    const storedData = await freelanceInstance.methods.get.call();
+    const storedData = await freelanceInstance.get.call();
 
-    assert.equal(storedData, 89, "The value 89 was not stored.");
+    assert.equal(storedData, 5, "The value 5 was not stored.");
   });
 
 
   //Tests to check the freelancer address
   it("...should be the correct address.", async () => {
-    const freelanceInstance = await Freelance.deployed();
-
-    // Set value of 89
-    await freelanceInstance.methods.constructor();
+    const freelanceInstance = await Freelance.new();
 
     // Get stored value
-    const freelancerAddress = await freelanceInstance.methods.freelancer().call();
+    const freelancerAddress = await freelanceInstance.freelancer();
 
     //msg.sender?
-    assert.equal(freelancerAddress, "The value 89 was not stored.");
+    assert.equal(freelancerAddress, accounts[0], "The address is incorrect.");
   });
 
 
@@ -37,45 +34,37 @@ contract("FreelanceCampaign", accounts => {
 
 
 //Tests whether the freelancers can create a request 
+//Tests whether the request amount is in Ether as opposed to wei 
   it("...creates a request.", async () => {
-    const freelanceInstance = await Freelance.deployed();
+    const freelanceInstance = await Freelance.new();
 
-    // Set value of 89
-    await freelanceInstance.methods.createRequest(1, { from: accounts[0] });
+    var value = 1;
+    var employer = "0x8a44eB27760A7B4236c7fc9A318bbb23D0dbd66A";
 
-
+    // creates request
+    await freelanceInstance.createRequest(value, employer);
+    
     // gets amount requested 
-    const storedData = await freelanceInstance.methods.get.call();
+    let valueRequest = await freelanceInstance.getRequestValue(0);
 
-    assert.equal(storedData, 89, "The value 89 was not stored.");
+    assert.equal(valueRequest, 1000000000000000000, "The value 1 was not requested.");
   });
 
 
-//Tests whether the request amount is in Ether as opposed to wei 
+//Tests if a request properly pushes to the request array 
 it("...makes sure the request amount is in Ether rather than Wei.", async () => {
-  const freelanceInstance = await Freelance.deployed();
+  const freelanceInstance = await Freelance.new();
 
-  // Set value of 89
-  await freelanceInstance.methods.createRequest(1, { from: accounts[0] });
+  var value = 1;
+  var employer = "0x8a44eB27760A7B4236c7fc9A318bbb23D0dbd66A";
 
-  // Get stored value
-  const storedData = await freelanceInstance.methods.get.call();
+  // creates request
+  await freelanceInstance.createRequest(value, employer);
+  
+  // gets amount requested 
+  let requestCount = await freelanceInstance.getRequestsCount()
 
-  assert.equal(storedData, 89, "The value 89 was not stored.");
-});
-
-
-//Tests if a request properly pushes to the request array and the value in the request is accurate
-it("...makes sure the request amount is in Ether rather than Wei.", async () => {
-  const freelanceInstance = await Freelance.deployed();
-
-  // Set value of 89
-  await freelanceInstance.methods.createRequest(1, { from: accounts[0] });
-
-  // Get stored value
-  const storedData = await freelanceInstance.methods.get.call();
-
-  assert.equal(storedData, 89, "The value 89 was not stored.");
+  assert.equal(requestCount, 1, "The value 1 was not requested.");
 });
   
 
@@ -84,15 +73,23 @@ it("...makes sure the request amount is in Ether rather than Wei.", async () => 
 
 //Tests whether a request can properly be approved and that the funds transfer
 it("...creates a request.", async () => {
-  const freelanceInstance = await Freelance.deployed();
+  const freelanceInstance = await Freelance.new();
 
-  // Set value of 89
-  await freelanceInstance.methods.createRequest(1, { from: accounts[0] });
+  var value = 1;
+  var employer = accounts[1];
 
-  // Get stored value
-  const storedData = await freelanceInstance.methods.get.call();
+  var oldValue =  Number(await web3.eth.getBalance(accounts[1]))
 
-  assert.equal(storedData, 89, "The value 89 was not stored.");
+  // creates request
+  await freelanceInstance.createRequest(value, employer)
+
+  let valueRequest = await freelanceInstance.getRequestValue(0)
+
+  await freelanceInstance.approveRequest(0, {value: valueRequest, from: employer})
+
+  var newValue = Number(await web3.eth.getBalance(accounts[1]))
+
+  assert.isBelow(newValue, oldValue, "not lower value");
 });
 
 });

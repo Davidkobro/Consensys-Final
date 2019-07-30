@@ -3,7 +3,7 @@ ConsenSys Academy’s 2018-2019 Developer Program Final Project
 
 ---
 
-#FreelanceFree
+# FreelanceFree
 Freelance Minus The Fees 
 
 ---

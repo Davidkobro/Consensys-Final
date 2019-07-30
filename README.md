@@ -1,5 +1,5 @@
 # Consensys Ethereum Developer BootCamp Final Project
-ConsenSys Academy’s 2018-2019 Developer Program Final Project
+ConsenSys Academy’s 2019 Developer Program 
 
 ---
 
